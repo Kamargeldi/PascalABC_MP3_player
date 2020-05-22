@@ -1,0 +1,1020 @@
+{$apptype windows}
+{$reference 'system.windows.forms.dll'}
+{$reference 'system.drawing.dll'}
+{$reference 'presentationcore.dll'}
+{$reference 'NAudio.dll'}
+{$resource 'quitdef.jpg'}
+{$resource 'quit.jpg'}
+{$resource 'mindef.jpg'}
+{$resource 'min.jpg'}
+{$resource 'slider.jpg'}
+{$resource 'ses.jpg'}
+{$resource 'torpedo.jpg'}
+{$resource 'openup.png'}
+{$resource 'opendown.png'}
+{$resource 'button_play.png'}
+{$resource 'button_pause.png'}
+{$resource 'button_play_highlight.png'}
+{$resource 'button_pause_highlight.png'}
+{$resource 'one.png'}
+{$resource 'oneh.png'}
+{$resource 'yza.png'}
+{$resource 'yzah.png'}
+{$resource 'effekt.gif'}
+{$resource 'speaker0.png'}
+{$resource 'speaker1.png'}
+{$resource 'speaker2.png'}
+{$resource 'speaker3.png'}
+{$resource 'speaker4.png'}
+{$resource 'speaker5.png'}
+{$resource 'speaker6.png'}
+{$resource 'speaker7.png'}
+{$resource 'speaker8.png'}
+{$resource 'speaker9.png'}
+{$resource 'New Project.png'}
+{$resource 'New Project (1).png'}
+{$resource 'New Project (2).png'}
+{$resource 'New Project (3).png'}
+{$resource 'New Project (4).png'}
+{$resource 'New Project (5).png'}
+{$resource 'New Project (6).png'}
+{$resource 'New Project (7).png'}
+{$resource 'New Project (8).png'}
+
+
+
+uses system.windows.forms,system.drawing, naudio.wave;
+
+
+
+var
+  main := new Form();
+
+var
+  control := new system.windows.forms.Label();
+
+var
+  lline := new system.windows.forms.Label();
+
+var
+  rline := new system.windows.forms.Label();
+
+var
+  bottom := new system.windows.forms.Label();
+
+var
+  x1, x2, y1, y2: int64;
+
+var
+  quit := new PictureBox;
+
+var
+  minimize := new PictureBox();
+
+var
+  sliderprog := new PictureBox();
+
+var
+  sliderproghandle := new system.windows.forms.Label();
+
+var
+  ses := new PictureBox();
+
+var
+  seshandle := new system.windows.forms.Label();
+
+var
+  con := new PictureBox();
+
+var
+  conhandle := new system.windows.forms.Label();
+
+var
+  tooltip := new ToolTip();
+
+var
+  prog1, ses2: real;
+
+var
+  player := new system.windows.media.MediaPlayer();
+
+var
+  open := new OpenFileDialog();
+
+var
+  timer := new Timer;
+
+var
+  stopped: boolean := true;
+
+var
+  torpedo := new PictureBox;
+
+var
+  wagt := new system.windows.forms.Label;
+
+var
+  ady := new system.windows.forms.Label();
+
+var
+  speed := new PictureBox;
+
+var
+  speedhandle := new system.windows.forms.Label;
+
+var
+  replay := new system.windows.forms.Label;
+
+var
+  openbut := new PictureBox();
+
+var
+  san := new system.windows.forms.Label;
+
+var
+  status := new system.windows.forms.Label;
+
+var
+  statusdef := new system.windows.forms.Timer;
+
+var
+  seek := new system.windows.forms.Label;
+
+var
+  rep, recno: integer;
+
+var
+  paused: boolean := true;
+
+var
+  playbut := new PictureBox;
+
+var
+  pausebut := new PictureBox;
+
+var
+  one := new PictureBox;
+
+var
+  yza := new PictureBox;
+
+var
+  stop := new PictureBox;
+
+var
+  bos := new system.windows.forms.Label;
+
+var
+  vis := new system.windows.forms.Timer();
+
+var
+  speaker := new Picturebox();
+
+var
+  efct := new picturebox();
+
+var
+  picn: integer := 0;
+
+var
+  antick := new system.windows.forms.timer();
+
+var
+  analizmusicpath: string = '';
+
+
+//procedures and functions
+procedure antick_tick(asd: system.object; wer: system.Eventargs);
+begin
+  if (analizmusicpath.Equals('') = false) then
+  begin
+    if (player.NaturalDuration.HasTimeSpan = true and paused = false) then
+    begin
+      var analizer := new mp3filereader(analizmusicpath);
+      analizer.CurrentTime := player.Position;
+      var t: byte := analizer.ReadByte();
+      if (t > 220) then picn := 9;
+    end;
+  end;
+end;
+
+
+procedure vis_tick(asd: system.object; wer: system.Eventargs);
+begin
+  if picn = 9 then begin speaker.Image := new bitmap(getresourcestream('speaker8.png')); picn := 8; end else
+  if picn = 8 then begin speaker.Image := new bitmap(getresourcestream('speaker7.png')); efct.Image := new bitmap(getresourcestream('New Project (8).png')); picn := 7; end else
+  if picn = 7 then begin speaker.Image := new bitmap(getresourcestream('speaker6.png')); efct.Image := new bitmap(getresourcestream('New Project (7).png')); picn := 6; end else
+  if picn = 6 then begin speaker.Image := new bitmap(getresourcestream('speaker5.png')); efct.Image := new bitmap(getresourcestream('New Project (6).png')); picn := 5; end else
+  if picn = 5 then begin speaker.Image := new bitmap(getresourcestream('speaker4.png')); efct.Image := new bitmap(getresourcestream('New Project (5).png')); picn := 4; end else
+  if picn = 4 then begin speaker.Image := new bitmap(getresourcestream('speaker3.png')); efct.Image := new bitmap(getresourcestream('New Project (4).png')); picn := 3; end else
+  if picn = 3 then begin speaker.Image := new bitmap(getresourcestream('speaker2.png')); efct.Image := new bitmap(getresourcestream('New Project (3).png')); picn := 2; end else
+  if picn = 2 then begin speaker.Image := new bitmap(getresourcestream('speaker1.png')); efct.Image := new bitmap(getresourcestream('New Project (2).png')); picn := 1; end else
+  if picn = 1 then begin speaker.Image := new bitmap(getresourcestream('speaker0.png')); efct.Image := new bitmap(getresourcestream('New Project (1).png')); picn := 0; end else
+end;
+
+
+procedure quit_mouseenter(asd: system.object; wer: system.EventArgs);
+begin
+  if (asd as picturebox).Name = 'quit' then (asd as picturebox).Image := new Bitmap(getresourcestream('quit.jpg'));
+  if (asd as picturebox).Name = 'minimize' then (asd as picturebox).Image := new Bitmap(getresourcestream('min.jpg'));
+  if (asd as picturebox).Name = 'playbut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_play_highlight.png'));
+  if (asd as picturebox).Name = 'pausebut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_pause_highlight.png'));
+  if (asd as picturebox).Name = 'yza' then (asd as picturebox).Image := new Bitmap(getresourcestream('yzah.png'));
+  if (asd as picturebox).Name = 'one' then (asd as picturebox).Image := new Bitmap(getresourcestream('oneh.png'));
+end;
+
+procedure quit_mouseleave(asd: system.object; wer: system.EventArgs);
+begin
+  if (asd as picturebox).Name = 'quit' then (asd as picturebox).Image := new Bitmap(getresourcestream('quitdef.jpg'));
+  if (asd as picturebox).Name = 'playbut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_play.png'));
+  if (asd as picturebox).Name = 'pausebut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_pause.png'));
+  if (asd as picturebox).Name = 'minimize' then (asd as picturebox).Image := new Bitmap(getresourcestream('mindef.jpg'));
+  if (asd as picturebox).Name = 'yza' then (asd as picturebox).Image := new Bitmap(getresourcestream('yza.png'));
+  if (asd as picturebox).Name = 'one' then (asd as picturebox).Image := new Bitmap(getresourcestream('one.png'));
+end;
+
+procedure quit_click(asd: system.object; wer: system.EventArgs);
+begin
+  if (asd as picturebox).Name = 'quit' then
+    if messagebox.Show('Выйти из программы', 'Внимание', messageboxbuttons.YesNo, messageboxicon.question, messageboxdefaultbutton.Button1) = dialogresult.Yes then
+      main.Close();
+  if (asd as picturebox).Name = 'minimize' then
+    main.WindowState := formwindowstate.Minimized;
+end;
+
+procedure control_mousedown(asd: system.object; wer: system.windows.forms.MouseEventArgs);
+begin
+  if wer.Button = mousebuttons.left then
+  begin
+    x1 := wer.X;
+    y1 := wer.Y;
+  end;
+end;
+
+procedure control_mousemove(asd: system.object; wer: system.windows.forms.MouseEventArgs);
+begin
+  if wer.Button = mousebuttons.Left then
+  begin
+    x2 := main.Left + wer.X;
+    y2 := main.Top + wer.Y;
+    main.Left := x2 - x1;
+    main.Top := y2 - y1;
+  end;
+end;
+
+procedure sliders_mousemove(asd: system.object; wer: system.windows.forms.MouseEventArgs);
+begin
+  if (asd as picturebox).Name = 'sliderprog' then
+  begin
+    if (wer.Button = mousebuttons.Left) and (stopped = false) and (player.NaturalDuration.HasTimeSpan = true) then 
+    begin
+      if wer.X < 0 then sliderproghandle.Width := 0 else if wer.X > 500 then sliderproghandle.Width := 300 else sliderproghandle.Width := wer.X;
+      prog1 := sliderprog.Width / (player.NaturalDuration.TimeSpan.TotalSeconds);
+      prog1 := sliderproghandle.Width / prog1;
+      player.Position := system.TimeSpan.FromSeconds(prog1);
+    end;
+    
+    if (wer.Button = mousebuttons.None) and (player.NaturalDuration.HasTimeSpan = true) then
+    begin
+      var n1 := sliderprog.Width / (player.NaturalDuration.TimeSpan.TotalSeconds);
+      n1 := round(wer.X / n1);
+      var a1, a2, b1, b2: integer;
+      a1 := (round(n1) mod 60);
+      a2 := (round(n1) div 60);
+      b1 := (a2 mod 60);
+      b2 := (a2 div 60);
+      var s1, s2, s3: string;
+      if a1 < 10 then s1 := '0' + a1.ToString else s1 := a1.ToString;
+      if b1 < 10 then s2 := '0' + b1.ToString else s2 := b1.ToString;
+      if b2 < 10 then s3 := '0' + b2.ToString else s3 := b2.ToString;
+      seek.Text := '[' + s1 + ':' + s2 + ':' + s3 + ']';
+    end;
+  end;
+  
+  
+  
+  if (asd as picturebox).Name = 'ses' then
+  begin
+    if wer.Button = mousebuttons.Left then 
+    begin
+      if wer.X > 65 then seshandle.Width := 65 else if wer.X < 0 then seshandle.Width := 0 else seshandle.Width := wer.X;
+      ses2 := ses.Width / 100;
+      ses2 := seshandle.Width / ses2;
+      player.Volume := ses2 / 100;
+      status.Text := 'Громкость: ' + round(player.Volume * 100).ToString + '%';
+    end;
+  end;
+  
+  
+  if (asd as picturebox).Name = 'speed' then
+  begin
+    if wer.Button = mousebuttons.Left then 
+    begin
+      if wer.X > 65 then speedhandle.Width := 65 else if wer.X < 0 then speedhandle.Width := 0 else speedhandle.Width := wer.X;
+      ses2 := speed.Width / 10;
+      ses2 := speedhandle.Width / ses2;
+      player.SpeedRatio := ((ses2) / 10) + 0.5;
+      status.Text := 'Скорость: ' + round(((player.SpeedRatio - 1) * 10)).ToString;
+    end;
+  end;
+  
+  if (asd as picturebox).Name = 'con' then
+  begin
+    if wer.Button = mousebuttons.Left then 
+    begin
+      if wer.X > 80 then conhandle.Width := 100 else if wer.X < 20 then conhandle.Width := 20 else conhandle.Width := wer.X;
+      main.Opacity := conhandle.Width / 100;
+      status.Text := 'Непрозрачность: ' + (main.Opacity * 100).ToString + '%';
+    end;
+  end;
+  
+end;
+
+procedure timer_tick(asd: system.object; wer: system.EventArgs);
+begin
+  if (paused = true) or (stopped = true) then
+  begin
+    bos.Visible := true;
+    stop.Visible := false;
+  end
+  else
+  begin
+    bos.Visible := false;
+    stop.Visible := true;
+  end;
+  
+  stop.Refresh;
+  
+  if player.NaturalDuration.HasTimeSpan = true then
+  begin
+    prog1 := sliderprog.Width / (player.NaturalDuration.TimeSpan.TotalSeconds);
+    sliderproghandle.Width := round(prog1 * player.Position.TotalSeconds);
+    var a1, a2, b1, d1, d2, b2, c1, c2: integer;
+    a1 := (round(player.NaturalDuration.TimeSpan.TotalSeconds) mod 60);
+    a2 := ((round(player.NaturalDuration.TimeSpan.TotalSeconds) div 60));
+    b1 := (a2 mod 60);
+    b2 := (a2 div 60);
+    c1 := (round(player.position.TotalSeconds) mod 60);
+    c2 := ((round(player.position.TotalSeconds) div 60));
+    d1 := (c2 mod 60);
+    d2 := (c2 div 60);
+    var s1, s2, s3, s4, s5, s6: string;
+    if c1 < 10 then s1 := '0' + c1.ToString else s1 := c1.ToString;
+    if d1 < 10 then s2 := '0' + d1.ToString else s2 := d1.ToString;
+    if d2 < 10 then s3 := '0' + d2.ToString else s3 := d2.ToString;
+    if a1 < 10 then s4 := '0' + a1.ToString else s4 := a1.ToString;
+    if b1 < 10 then s5 := '0' + b1.ToString else s5 := b1.ToString;
+    if b2 < 10 then s6 := '0' + b2.ToString else s6 := b2.ToString;
+    wagt.Text := s1 + ':' + s2 + ':' + s3 + ' / ' + s4 + ':' + s5 + ':' + s6;
+  end;
+end;
+
+
+
+procedure main_keydown(asd: system.object; wer: system.windows.forms.KeyEventArgs);
+begin
+  
+  if (wer.KeyCode = keys.Left) and (player.NaturalDuration.HasTimeSpan = true) then
+  begin
+    if stopped = false then player.Position := system.TimeSpan.FromSeconds(player.Position.TotalSeconds - 5);
+  end;
+  
+  if (wer.KeyCode = keys.right) and (player.NaturalDuration.HasTimeSpan = true) then
+  begin
+    if stopped = false then player.Position := system.TimeSpan.Fromseconds(player.Position.TotalSeconds + 5);
+  end;
+  
+  if wer.KeyCode = keys.Up then
+  begin
+    ses2 := ses.Width / 100;
+    player.Volume := player.Volume + 0.01;
+    seshandle.Width := round(player.Volume * 100 * ses2);
+    status.Text := 'Громкость: ' + round(player.Volume * 100).ToString + '%';
+  end;
+  
+  if wer.KeyCode = keys.Down then
+  begin
+    ses2 := ses.Width / 100;
+    player.Volume := player.Volume - 0.01;
+    seshandle.Width := round(player.Volume * 100 * ses2);
+    status.Text := 'Громкость: ' + round(player.Volume * 100).ToString + '%';
+  end;
+  
+  if (wer.KeyCode = keys.Space) then
+    if (paused = true) then
+    begin
+      player.Play();
+      paused := false;
+      stopped := false;
+    end
+    else
+    begin
+      player.pause();
+      paused := true;
+    end;
+  
+end;
+
+
+
+procedure main_mousewheel(asd: system.object; wer: system.windows.forms.mouseeventargs);
+begin
+  if ((wer.Delta >= 0)) then 
+  begin
+    var def := new system.windows.forms.keyeventargs(keys.Up);
+    main_keydown(main, def);
+  end
+  else 
+  begin
+    var def := new system.windows.forms.keyeventargs(keys.Down);
+    main_keydown(main, def);
+  end;
+end;
+
+
+
+procedure player_mediaended(asd: system.object; wer: system.EventArgs);
+begin
+  if rep = 0 then
+  begin
+    player.Position := system.TimeSpan.Fromseconds(0);
+    player.Stop();
+    paused := true;
+    stopped := true;
+    seek.Text := '[00:00:00]';
+  end;
+  
+  if rep = 1 then
+  begin
+    player.Position := system.TimeSpan.Fromseconds(0);
+    player.Stop;
+    player.Open(new system.Uri(open.FileNames[recno]));
+    player.Play;
+  end;
+  
+  if rep = 2 then
+  begin
+    player.Position := system.TimeSpan.Fromseconds(0);
+    player.Stop();
+    if recno = open.FileNames.Length - 1 then recno := 0 else recno := recno + 1;
+    player.Open(new system.Uri(open.FileNames[recno]));
+    player.Play;
+    san.Text := '[' + (recno + 1).ToString + '/' + open.FileNames.Length.ToString + ']';
+  end;
+  
+end;
+
+
+
+
+procedure player_mediaopened(asd: system.object; wer: system.EventArgs);
+begin
+  stopped := false;
+  ady.Text := open.FileNames[recno];
+  analizmusicpath := ady.Text;
+end;
+
+procedure buts_mouseup(asd: system.object; wer: system.windows.forms.MouseEventArgs);
+begin
+  if wer.Button = mousebuttons.Left then
+  begin
+    if (asd as picturebox).Name = 'openbut' then (asd as picturebox).Image := new Bitmap(getresourcestream('openup.png'));
+    if (asd as picturebox).Name = 'playbut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_play_highlight.png'));
+    if (asd as picturebox).Name = 'pausebut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_pause_highlight.png'));
+    if (asd as picturebox).Name = 'yza' then (asd as picturebox).Image := new Bitmap(getresourcestream('yzah.png'));
+    if (asd as picturebox).Name = 'one' then (asd as picturebox).Image := new Bitmap(getresourcestream('oneh.png'));
+  end;
+end;
+
+
+procedure openbut_click(asd: system.object; wer: system.EventArgs);
+begin
+  if open.ShowDialog() = dialogresult.OK then 
+  begin
+    player.Stop();
+    player.Open(new system.Uri(open.FileNames[0]));
+    player.Play();
+    stopped := false;
+    san.Text := '[1/' + open.FileNames.Length.ToString + ']';
+    recno := 0;
+    paused := false;
+  end; 
+end;
+
+
+procedure buts_mousedown(asd: system.object; wer: system.windows.forms.MouseEventArgs);
+begin
+  if wer.Button = mousebuttons.Left then
+  begin
+    if (asd as picturebox).Name = 'openbut' then (asd as picturebox).Image := new Bitmap(getresourcestream('opendown.png'));
+    if (asd as picturebox).Name = 'playbut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_play.png'));
+    if (asd as picturebox).Name = 'pausebut' then (asd as picturebox).Image := new Bitmap(getresourcestream('button_pause.png'));
+    if (asd as picturebox).Name = 'one' then (asd as picturebox).Image := new Bitmap(getresourcestream('one.png'));
+    if (asd as picturebox).Name = 'yza' then (asd as picturebox).Image := new Bitmap(getresourcestream('yza.png'));
+  end;
+end;
+
+
+procedure statusdef_tick(asd: system.object; wer: system.EventArgs);
+begin
+  status.Text := '';
+end;
+
+
+procedure replay_click(asd: system.object; wer: system.EventArgs);
+begin
+  if replay.ForeColor = color.white then begin
+    replay.ForeColor := color.Blue; rep := 1;
+    status.Text := 'Повтор один'; end else
+  if replay.ForeColor = color.Blue then begin
+    replay.ForeColor := color.Violet; rep := 2;
+    status.Text := 'Повтор все'; end else
+  if replay.ForeColor = color.Violet then begin
+    replay.ForeColor := color.white; rep := 0;
+    status.Text := 'Повтор выкл.'; end;
+end;
+
+
+
+procedure playbut_click(asd: system.object; wer: system.EventArgs);
+begin
+  if player.Source <> nil then
+  begin
+    player.Play;
+    paused := false;
+    stopped := false;
+  end;
+end;
+
+
+
+procedure pausebut_click(asd: system.object; wer: system.EventArgs);
+begin
+  if player.Source <> nil then
+  begin
+    player.Pause;
+    paused := true;
+  end;
+end;
+
+
+
+procedure one_click(asd: system.object; wer: system.EventArgs);
+begin
+  if open.FileNames.Length <> 0 then
+  begin
+    if recno < open.FileNames.Length - 1 then recno := recno + 1;
+    player.Open(new system.Uri(open.FileNames[recno]));
+    player.Play;
+    paused := false;
+    stopped := false;
+    san.Text := '[' + (recno + 1).ToString + '/' + open.FileNames.Length.ToString + ']';
+  end;
+end;
+
+
+
+procedure yza_click(asd: system.object; wer: system.EventArgs);
+begin
+  if open.FileNames.Length <> 0 then
+  begin
+    if recno > 0 then recno := recno - 1;
+    player.Open(new system.Uri(open.FileNames[recno]));
+    player.Play;
+    paused := false;
+    stopped := false;
+    san.Text := '[' + (recno + 1).ToString + '/' + open.FileNames.Length.ToString + ']';
+  end;
+end;
+
+//endproc and  func
+
+
+
+procedure initializecomponent();
+begin
+  //main
+  main.StartPosition := formstartposition.CenterScreen;
+  main.Height := 700;
+  main.Width := 600;
+  main.FormBorderStyle := formborderstyle.None;
+  main.BackColor := color.FromArgb(50, 50, 50);
+  main.Text := 'Mini MP3 Player';
+  main.KeyPreview := true;
+  
+  
+  //control
+  control.Top := 0;
+  control.Left := 0;
+  control.Height := 25;
+  control.Width := main.Width;
+  control.Parent := main;
+  control.BackColor := color.FromArgb(0, 0, 0);
+  control.Font := new Font('Arial', 15, fontstyle.Italic);
+  control.Text := 'Kamar Meredow';
+  control.ForeColor := color.White;
+  
+  //lline, rline, bottom
+  lline.Top := 25;
+  rline.Top := 25;
+  bottom.Top := main.Height - 5;
+  lline.Width := 5;
+  rline.Width := 5;
+  bottom.Width := main.Width;
+  lline.Left := 0;
+  rline.left := main.Width - 5;
+  bottom.Left := 0;
+  lline.Height := main.Height - 5;
+  rline.Height := main.Height - 5;
+  bottom.Height := 5;
+  lline.Text := '';
+  rline.Text := '';
+  bottom.Text := '';
+  lline.BackColor := color.FromArgb(0, 0, 0);
+  rline.BackColor := color.FromArgb(0, 0, 0);
+  bottom.BackColor := color.FromArgb(0, 0, 0);
+  lline.Parent := main;
+  rline.Parent := main;
+  bottom.Parent := main;
+  
+  //quit
+  quit.Name := 'quit';
+  quit.Height := 21;
+  quit.Width := 30;
+  quit.BackColor := color.White;
+  quit.Top := 2;
+  quit.Left := 565;
+  quit.Parent := main;
+  quit.BringToFront;
+  quit.Image := new Bitmap(getresourcestream('quitdef.jpg'));
+  
+  //speaker
+  speaker.Height := 400;
+  speaker.Width := 400;
+  speaker.Top := 250;
+  speaker.Left := 100;
+  speaker.SizeMode := pictureboxsizemode.StretchImage;
+  speaker.Image := new bitmap(getresourcestream('speaker0.png'));
+  speaker.Parent := main;
+  
+  //minimize
+  minimize.Name := 'minimize';
+  minimize.Height := 21;
+  minimize.Width := 30;
+  minimize.BackColor := color.White;
+  minimize.Top := 2;
+  minimize.Left := 530;
+  minimize.Parent := main;
+  minimize.BringToFront;
+  minimize.Image := new Bitmap(getresourcestream('mindef.jpg'));
+  
+  //sliderprog
+  sliderprog.Name := 'sliderprog';
+  sliderprog.Top := 180;
+  sliderprog.Left := 20;
+  sliderprog.Height := 15;
+  sliderprog.Width := 490;
+  sliderprog.SizeMode := pictureboxsizemode.StretchImage;
+  sliderprog.Image := new Bitmap(getresourcestream('slider.jpg'));
+  sliderprog.BringToFront;
+  sliderprog.Parent := main;
+  
+  //sliderproghandle
+  sliderproghandle.Text := '';
+  sliderproghandle.BackColor := color.FromArgb(0, 255, 0);
+  sliderproghandle.Height := 3;
+  sliderproghandle.Top := 6;
+  sliderproghandle.Left := 0;
+  sliderproghandle.Width := 0;
+  sliderproghandle.Parent := sliderprog;
+  sliderproghandle.Enabled := false;
+  
+  //ses
+  ses.Name := 'ses';
+  ses.Top := 180;
+  ses.Left := 520;
+  ses.Height := 15;
+  ses.Width := 65;
+  ses.Image := new Bitmap(getresourcestream('ses.jpg'));
+  ses.BringToFront;
+  ses.Parent := main;
+  
+  //seshandle
+  seshandle.Text := '';
+  seshandle.BackColor := color.FromArgb(0, 255, 0);
+  seshandle.Height := 3;
+  seshandle.Top := 6;
+  seshandle.Left := 0;
+  seshandle.Width := 33;
+  seshandle.Parent := ses;
+  seshandle.Enabled := false;
+  
+  //speed
+  speed.Name := 'speed';
+  speed.Top := 155;
+  speed.Left := 520;
+  speed.Height := 15;
+  speed.Width := 65;
+  speed.Image := new Bitmap(getresourcestream('ses.jpg'));
+  speed.BringToFront;
+  speed.Parent := main;
+  
+  //speedhandle
+  speedhandle.Text := '';
+  speedhandle.BackColor := color.FromArgb(0, 255, 0);
+  speedhandle.Height := 3;
+  speedhandle.Top := 6;
+  speedhandle.Left := 0;
+  speedhandle.Width := 33;
+  speedhandle.Parent := speed;
+  speedhandle.Enabled := false;
+  
+  //con
+  con.SizeMode := pictureboxsizemode.StretchImage;
+  con.Name := 'con';
+  con.Top := 7;
+  con.Left := 435;
+  con.Height := 15;
+  con.Width := 80;
+  con.Image := new Bitmap(getresourcestream('ses.jpg'));
+  con.BringToFront;
+  con.Parent := main;
+  
+  //conhandle
+  conhandle.Text := '';
+  conhandle.BackColor := color.FromArgb(0, 255, 0);
+  conhandle.Height := 3;
+  conhandle.Top := 6;
+  conhandle.Left := 0;
+  conhandle.Width := 100;
+  conhandle.Parent := con;
+  conhandle.Enabled := false;
+  
+  //open
+  open.Title := 'Mini MP3 Player';
+  open.DefaultExt := 'mp3';
+  open.Multiselect := true;
+  open.AddExtension := true;
+  open.Filter := 'MP3 файлы (*.mp3)|*.mp3';
+  
+  //player
+  
+  
+  
+  //timer
+  timer.Interval := 100;
+  timer.Enabled := true;
+  
+  //torpedo
+  torpedo.Height := 100;
+  torpedo.Width := 580;
+  torpedo.Left := 10;
+  torpedo.Top := 30;
+  torpedo.SizeMode := pictureboxsizemode.StretchImage;
+  torpedo.Image := new Bitmap(getresourcestream('torpedo.jpg'));
+  torpedo.Parent := main;
+  
+  //wagt
+  wagt.Width := 130;
+  wagt.Left := 350;
+  wagt.Parent := torpedo;
+  wagt.Top := 70;
+  wagt.Height := 15;
+  wagt.BackColor := color.Transparent;
+  wagt.Text := '00:00:00 / 00:00:00';
+  wagt.ForeColor := color.White;
+  wagt.Font := new Font('Arial', 10, fontstyle.Italic);
+  
+  //ady
+  ady.Height := 15;
+  ady.Left := 30;
+  ady.Parent := torpedo;
+  ady.Top := 15;
+  ady.width := 300;
+  ady.BackColor := color.Transparent;
+  ady.ForeColor := color.White;
+  
+  //san
+  san.Height := 15;
+  san.Left := 515;
+  san.Parent := torpedo;
+  san.Top := 15;
+  san.width := 50;
+  san.BackColor := color.transparent;
+  san.ForeColor := color.White;
+  san.Text := '[0/0]';
+  san.Font := new Font('arial', 8, fontstyle.Bold);
+  
+  //status
+  status.Height := 15;
+  status.Top := 35;
+  status.Left := 30;
+  status.Width := 150;
+  status.Parent := torpedo;
+  status.ForeColor := color.White;
+  status.BackColor := color.transparent;
+  
+  //openbut
+  openbut.Name := 'openbut';
+  openbut.Left := 10;
+  openbut.Top := 65;
+  openbut.Height := 30;
+  openbut.Width := 120;
+  openbut.Parent := torpedo;
+  openbut.BackColor := color.Transparent;
+  openbut.Image := new Bitmap(getresourcestream('openup.png'));
+  
+  //tooltip
+  tooltip.SetToolTip(con, 'Непрозрачность');
+  tooltip.SetToolTip(quit, 'Выход');
+  tooltip.SetToolTip(minimize, 'Свернуть');
+  tooltip.SetToolTip(ses, 'Громкость');
+  tooltip.SetToolTip(sliderprog, 'Текущая позиция');
+  tooltip.SetToolTip(conhandle, 'Непрозрачность');
+  tooltip.SetToolTip(sliderproghandle, 'Текущая позиция');
+  tooltip.SetToolTip(seshandle, 'Громкость');
+  tooltip.SetToolTip(wagt, 'Время музыки');
+  tooltip.SetToolTip(speed, 'Скорость музыки');
+  tooltip.SetToolTip(replay, 'Повтор');
+  tooltip.SetToolTip(openbut, 'Открыть медиа файлы');
+  tooltip.SetToolTip(playbut, 'Плей');
+  tooltip.SetToolTip(pausebut, 'Пауза');
+  tooltip.SetToolTip(one, 'Вперед');
+  tooltip.SetToolTip(yza, 'Назад');
+  
+  //statusdef
+  statusdef.Interval := 3000;
+  statusdef.Enabled := true;
+  
+  //seek
+  seek.Top := 70;
+  seek.Width := 90;
+  seek.Height := 17;
+  seek.Left := 480;
+  seek.Parent := torpedo;
+  seek.BackColor := color.Transparent;
+  seek.ForeColor := color.White;
+  seek.Font := new Font('arial', 8, fontstyle.Italic);
+  seek.Text := '[00:00:00]';
+  
+  //replay
+  replay.Height := 25;
+  replay.Width := 30;
+  replay.Left := 510;
+  replay.Top := 40;
+  replay.Font := new Font('webdings', 16, fontstyle.bold);
+  replay.Text := chr(113);
+  replay.Parent := torpedo;
+  replay.ForeColor := color.White;
+  replay.BackColor := color.Transparent;
+  
+  //playbut
+  playbut.Name := 'playbut';
+  playbut.Left := 20;
+  playbut.Height := 20;
+  playbut.Width := 40;
+  playbut.Top := 140;
+  playbut.Parent := main;
+  playbut.BackColor := color.FromArgb(50, 50, 50);
+  playbut.AutoSize := true;
+  playbut.Image := new Bitmap(getresourcestream('button_play.png'));
+  
+  //pausebut
+  pausebut.Name := 'pausebut';
+  pausebut.Left := 61;
+  pausebut.Height := 20;
+  pausebut.Width := 40;
+  pausebut.Top := 140;
+  pausebut.Parent := main;
+  pausebut.BackColor := color.FromArgb(50, 50, 50);
+  pausebut.AutoSize := true;
+  pausebut.Image := new Bitmap(getresourcestream('button_pause.png'));
+  
+  //yza
+  yza.Name := 'yza';
+  yza.Left := 102;
+  yza.Top := 140;
+  yza.Height := 20;
+  yza.Width := 40;
+  yza.Parent := main;
+  yza.BackColor := color.Transparent;
+  yza.Image := new Bitmap(getresourcestream('yza.png'));
+  yza.AutoSize := true;
+  
+  //one
+  one.Name := 'one';
+  one.Left := 143;
+  one.Top := 140;
+  one.Height := 20;
+  one.Width := 40;
+  one.Parent := main;
+  one.BackColor := color.Transparent;
+  one.Image := new Bitmap(getresourcestream('one.png'));
+  one.AutoSize := true;
+  
+  //stop
+  stop.Parent := torpedo;
+  stop.BackColor := color.Transparent;
+  stop.Left := 350;
+  stop.Top := 35;
+  stop.Width := 170;
+  stop.Height := 25;
+  stop.Image := new Bitmap(getresourcestream('effekt.gif'));
+  stop.Visible := false;
+  
+  //bos
+  bos.Width := 140;
+  bos.Height := 2;
+  bos.Text := '';
+  bos.BackColor := color.White;
+  bos.Top := 47;
+  bos.Left := 350;
+  bos.Parent := torpedo;
+  bos.Visible := true;
+  
+  //vis
+  vis.Interval := 1;
+  vis.Enabled := true;
+  
+  //antick
+  antick.Interval := 1;
+  antick.Enabled := true;
+  
+  //analizer
+  
+  
+  //efct
+  efct.Parent := main;
+  efct.BackColor := color.Transparent;
+  efct.Left := 470;
+  efct.Top := 220;
+  efct.Width := 100;
+  efct.Height := 100;
+  efct.Image := new Bitmap(getresourcestream('New Project.png'));
+  efct.Visible := true;
+  
+  efct.BringToFront;
+  control.SendToBack;
+  //eventconnections
+  antick.Tick += antick_tick;
+  quit.MouseEnter += quit_mouseenter;
+  quit.MouseLeave += quit_mouseleave;
+  quit.Click += quit_Click;
+  minimize.MouseEnter += quit_mouseenter;
+  minimize.Mouseleave += quit_Mouseleave;
+  minimize.Click += quit_click;
+  control.MouseDown += control_mousedown;
+  control.MouseMove += control_mousemove;
+  sliderprog.MouseMove += sliders_mousemove;
+  ses.MouseMove += sliders_mousemove;
+  sliderprog.MouseDown += sliders_mousemove;
+  ses.MouseDown += sliders_mousemove;
+  con.MouseMove += sliders_mousemove;
+  con.MouseDown += sliders_mousemove;
+  timer.Tick += timer_tick;
+  main.KeyDown += main_keydown;
+  main.MouseWheel += main_mousewheel;
+  player.MediaEnded += player_mediaended;
+  speed.MouseDown += sliders_mousemove;
+  speed.MouseMove += sliders_mousemove;
+  player.MediaOpened += player_mediaopened;
+  openbut.MouseDown += buts_mousedown;
+  openbut.MouseUp += buts_mouseup;
+  openbut.Click += openbut_click;
+  statusdef.Tick += statusdef_tick;
+  replay.Click += replay_click;
+  pausebut.MouseEnter += quit_mouseenter;
+  pausebut.MouseLeave += quit_mouseleave;
+  playbut.MouseEnter += quit_mouseenter;
+  playbut.MouseLeave += quit_mouseleave;
+  playbut.MouseDown += buts_mousedown;
+  playbut.MouseUp += buts_mouseup;
+  pausebut.MouseDown += buts_mousedown;
+  pausebut.MouseUp += buts_mouseup;
+  playbut.Click += playbut_click;
+  pausebut.Click += pausebut_click;
+  one.MouseDown += buts_mousedown;
+  one.MouseUp += buts_mouseup;
+  one.MouseEnter += quit_mouseenter;
+  one.MouseLeave += quit_mouseleave;
+  yza.MouseDown += buts_mousedown;
+  yza.MouseUp += buts_mouseup;
+  yza.MouseEnter += quit_mouseenter;
+  yza.MouseLeave += quit_mouseleave;
+  one.Click += one_click;
+  yza.Click += yza_click;
+  vis.Tick += vis_tick;
+  
+  
+end;
+
+
+
+
+
+
+begin//GLAWNY
+  initializecomponent();
+  application.Run(main);
+  
+end. //GLAWNYY
